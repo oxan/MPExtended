@@ -1,0 +1,19 @@
+﻿@model RecordingListViewModel
+@{
+    ViewBag.Title = String.IsNullOrEmpty(Model.Title) ? UIStrings.YourRecordings : Model.Title;
+}
+
+<h2>@ViewBag.Title</h2>
+<br />
+
+<div class="graphical-list">
+    @foreach (var recording in Model.Recordings)
+    {
+        <a href="@Url.Action("Details", new { id = recording.Id })" class="item" style="max-width: 200px; height: 175px;">
+            <div class="image">
+                <img src="@Url.Action("PreviewImage", new { id = recording.Id, width = 200 })" alt="@recording.Recording.Title" width="200" />
+            </div>
+            @recording.Recording.Title
+        </a>
+    }
+</div>

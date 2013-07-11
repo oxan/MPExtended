@@ -1,10 +1,10 @@
 ﻿@using MPExtended.Services.Common.Interfaces
-@model MPExtended.Services.TVAccessService.Interfaces.WebRecordingBasic
+@model RecordingViewModel
 @{
-    ViewBag.Title = Model.Title;
+    ViewBag.Title = Model.Recording.Title;
 }
 
-<h2>@Model.Title</h2>
+<h2>@Model.Recording.Title</h2>
 
 <div class="imageColumn">
     <img src="@Url.Action("PreviewImage", new { id = @Model.Id, width = 300 })" width="300" alt="No image" />
@@ -12,14 +12,16 @@
 
 <div class="dataColumn">
     <ul>
-        <li>@UIStrings.RecordedOn: @Model.StartTime.ToShortDateString()</li>
-        <li>@Model.Genre</li>
-        <li>@ViewBag.Quality</li>
+        <li>@UIStrings.RecordedOn @Model.Recording.StartTime.ToShortDateString()</li>
+        <li>@Model.Recording.ChannelName</li>
+        <li>@Model.Recording.Genre</li>
+        <li>@Model.FullQuality</li>
         <li>@Html.ActionLink(UIStrings.Play, "Watch", new { id = Model.Id })</li>
         <li>@Html.ActionLink(UIStrings.Download, "Download", "Stream", new { item = Model.Id, type = WebMediaType.Recording }, new { })</li>
+        <li>@Html.ActionLink(UIStrings.Delete, "Delete", new { id = Model.Id })</li>
     </ul>
 </div>
 
 <div class="textColumn">
-    @Model.Description
+    @Model.Recording.Description
 </div>

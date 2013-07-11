@@ -393,3 +393,24 @@ input[type=text], input[type=password], select
     margin-bottom: 2px;
     vertical-align: middle;
 }
+
+/******************** Default views ****************************/
+.viewtype-chooser
+{
+    float: right;
+}
+
+.viewtype-chooser a.active
+{
+    color: Black;
+    font-weight: normal;
+    cursor: default;
+}
+
+.graphical-list .item
+{
+    display: block;
+    float: left;
+    text-align: center;
+    padding: 5px;
+}

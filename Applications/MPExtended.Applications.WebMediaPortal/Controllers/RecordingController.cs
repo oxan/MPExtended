@@ -21,6 +21,8 @@ using System.Linq;
 using System.Web;
 using System.Web.Mvc;
 using MPExtended.Applications.WebMediaPortal.Code;
+using MPExtended.Applications.WebMediaPortal.Models;
+using MPExtended.Libraries.Service;
 using MPExtended.Services.Common.Interfaces;
 
 namespace MPExtended.Applications.WebMediaPortal.Controllers
@@ -32,22 +34,29 @@ namespace MPExtended.Applications.WebMediaPortal.Controllers
         // GET: /Recording/
         public ActionResult Index()
         {
+            // This action shouldn't be called
+            return RedirectToActionPermanent("Categories");
+        }
+
+        public ActionResult Categories(RecordingCategoryType? type = null)
+        {
             var recordings = Connections.Current.TAS.GetRecordings();
-            if (recordings == null)
-                return HttpNotFound();
-            return View(recordings);
+            return Data(new RecordingCategoriesViewModel(recordings, type));
+        }
+
+        public ActionResult Programs(string filter = null, string title = null)
+        {
+            var recordings = Connections.Current.TAS.GetRecordings(filter);
+            return Data(new RecordingListViewModel(recordings, title));
         }
 
         public ActionResult Details(int id)
         {
-            var rec = Connections.Current.TAS.GetRecordingById(id);
-            if (rec == null)
+            var recording = Connections.Current.TAS.GetRecordingById(id);
+            if (recording == null)
                 return HttpNotFound();
 
-            var fileInfo = Connections.Current.TAS.GetRecordingFileInfo(rec.Id);
-            var mediaInfo = Connections.Current.TASStreamControl.GetMediaInfo(WebMediaType.Recording, null, rec.Id.ToString(), 0);
-            ViewBag.Quality = MediaInfoFormatter.GetFullInfoString(mediaInfo, fileInfo);
-            return View(rec);
+            return Data(new RecordingViewModel(recording));
         }
 
         public ActionResult PreviewImage(int id, int width = 0, int height = 0)
@@ -55,11 +64,25 @@ namespace MPExtended.Applications.WebMediaPortal.Controllers
             return Images.ReturnFromService(WebMediaType.Recording, id.ToString(), WebFileType.Content, width, height, "Images/default/recording.png");
         }
 
+        public ActionResult ChannelLogo(int channelId, int width = 0, int height = 0)
+        {
+            return Images.ReturnFromService(WebMediaType.TV, channelId.ToString(), WebFileType.Logo, width, height, "Images/default/logo.png");
+        }
 
         public ActionResult Watch(int id)
         {
-            var rec = Connections.Current.TAS.GetRecordingById(id);
-            return View(rec);
+            var recording = Connections.Current.TAS.GetRecordingById(id);
+            if (recording == null)
+                return HttpNotFound();
+
+            return View(recording);
+        }
+
+        public ActionResult Delete(int id)
+        {
+            Log.Debug("Deleting recording id={0} on user request", id);
+            Connections.Current.TAS.DeleteRecording(id);
+            return RedirectToAction("Categories");
         }
     }
 }

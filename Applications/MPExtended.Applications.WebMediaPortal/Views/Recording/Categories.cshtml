@@ -1,0 +1,29 @@
+﻿@model RecordingCategoriesViewModel
+@{
+    ViewBag.Title = UIStrings.YourRecordings;
+}
+
+<div class="viewtype-chooser">
+    <a @Html.Raw(Model.SelectedType == RecordingCategoryType.Program ? "class='active'" : "") href="@Url.Action("Categories", new { type = RecordingCategoryType.Program })">program</a> |
+    <a @Html.Raw(Model.SelectedType == RecordingCategoryType.Channel ? "class='active'" : "") href="@Url.Action("Categories", new { type = RecordingCategoryType.Channel })">channel</a>
+</div>
+
+<h2>@UIStrings.YourRecordings</h2>
+<br />
+
+<div class="graphical-list">
+    @foreach (var category in Model.ForCurrentType())
+    {
+        <a href="@Url.Action("Programs", new { filter = category.Filter, Title = category.Name })" class="item" style="max-width: 200px; height: 185px;">
+            @if (category.ArtworkAction != null)
+            {
+                category.ArtworkParameters["width"] = "200";
+                
+                <div class="image">
+                    <img src="@Url.Action(category.ArtworkAction, category.ArtworkParameters)" alt="@category.Name" width="200" />
+                </div>
+            }
+            @category.Name
+        </a>
+    }
+</div>
