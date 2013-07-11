@@ -26,6 +26,7 @@ using System.Web;
 using System.Web.Mvc;
 using System.Web.Routing;
 using MPExtended.Applications.WebMediaPortal.Models;
+using MPExtended.Applications.WebMediaPortal.Mvc;
 using MPExtended.Applications.WebMediaPortal.Strings;
 using MPExtended.Libraries.Service;
 
@@ -65,6 +66,14 @@ namespace MPExtended.Applications.WebMediaPortal.Code
         protected override HttpNotFoundResult HttpNotFound(string statusDescription)
         {
             throw new HttpException((int)HttpStatusCode.NotFound, statusDescription);
+        }
+
+        protected DataResult Data(object model)
+        {
+            return new DataResult()
+            {
+                Model = model
+            };
         }
 
         private void SetViewBagProperties(dynamic bag)

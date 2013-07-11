@@ -113,6 +113,7 @@
     <Compile Include="Models\MusicViewModels.cs" />
     <Compile Include="Mvc\AssetManager.cs" />
     <Compile Include="Mvc\CustomWebViewPage.cs" />
+    <Compile Include="Mvc\DataResult.cs" />
     <Compile Include="Mvc\HtmlHelperExtensionMethods.cs" />
     <Compile Include="Mvc\JQueryDocumentReadyScript.cs" />
     <Compile Include="Mvc\JQueryHelper.cs" />
