@@ -36,12 +36,17 @@ namespace MPExtended.Applications.WebMediaPortal.Mvc
         private ActionResult CreateActionResult(ControllerContext context)
         {
             var request = context.HttpContext.Request;
+
             bool preferJson = request.AcceptTypes.Contains("application/json") ||
                               request.AcceptTypes.Contains("text/javascript") ||
                              (request.Params["format"] != null && request["format"] == "json");
-
             if (preferJson)
                 return CreateJsonResult(context);
+
+            bool preferPartial = request.Params["partial"] != null;
+            if (preferPartial)
+                return CreatePartialResult(context);
+
             return CreateViewResult(context);
         }
 
@@ -51,6 +56,18 @@ namespace MPExtended.Applications.WebMediaPortal.Mvc
             {
                 Data = Model,
                 JsonRequestBehavior = JsonRequestBehavior.AllowGet
+            };
+        }
+
+        private PartialViewResult CreatePartialResult(ControllerContext context)
+        {
+            var viewData = context.Controller.ViewData;
+            viewData.Model = Model;
+            return new PartialViewResult()
+            {
+                ViewData = viewData,
+                TempData = context.Controller.TempData,
+                ViewEngineCollection = ViewEngines.Engines
             };
         }
 
