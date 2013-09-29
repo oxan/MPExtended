@@ -69,95 +69,41 @@ namespace MPExtended.Applications.ServiceConfigurator.Code
             }
         }
 
-        public static void UpdateStreamingList(this ObservableCollection<WpfStreamingSession> oldList, IList<WebStreamingSession> newList)
+        public static void UpdateList<TWpf, TOriginal>(this ObservableCollection<TWpf> wpfCollection, Func<TOriginal, string> idExtractor, IList<TOriginal> list)
+            where TWpf : IWpfListItem<TOriginal>, new()
         {
-            //update/add entries
-            foreach (WebStreamingSession sNew in newList)
+            foreach (TOriginal item in list)
             {
-                bool updated = false;
-                foreach (WpfStreamingSession sOld in oldList)
+                foreach (TWpf old in wpfCollection)
                 {
-                    if (sOld.Identifier.Equals(sNew.Identifier))
+                    if (old.Identifier.Equals(idExtractor(item)))
                     {
-                        sOld.UpdateStreamingSession(sNew);
-                        updated = true;
-                        break;
+                        old.UpdateFrom(item);
+                        goto contLoop1;
                     }
                 }
 
-                if (!updated)
-                {
-                    oldList.Add(new WpfStreamingSession(sNew));
-                }
+                var forWpf = new TWpf();
+                forWpf.UpdateFrom(item);
+                wpfCollection.Add(forWpf);
+
+            contLoop1: { }
             }
 
-            //remove all entries that are no longer in the list (newList)
-            for (int i = oldList.Count - 1; i >= 0; i--)
+            for (int i = wpfCollection.Count - 1; i >= 0; i--)
             {
-                bool found = false;
-                foreach (WebStreamingSession s in newList)
+                foreach (TOriginal item in list)
                 {
-                    if (oldList[i].Identifier.Equals(s.Identifier))
-                    {
-                        found = true;
-                        break;
-                    }
+                    if (wpfCollection[i].Identifier == idExtractor(item))
+                        goto contLoop2;
                 }
 
-                if (!found)
-                {
-                    oldList.RemoveAt(i);
-                }
+                wpfCollection.RemoveAt(i);
+
+            contLoop2: { }
             }
         }
 
-        public static void UpdateScraperList(this ObservableCollection<WpfScraperConfig> oldList, IList<WebScraper> newList)
-        {
-            //update/add entries
-            foreach (WebScraper sNew in newList)
-            {
-                bool updated = false;
-                foreach (WpfScraperConfig sOld in oldList)
-                {
-                    if (sOld.ScraperId.Equals(sNew.ScraperId))
-                    {
-                        sOld.UpdateScraper(sNew);
-                        updated = true;
-                        break;
-                    }
-                }
-
-                if (!updated)
-                {
-                    oldList.Add(new WpfScraperConfig(sNew));
-                }
-            }
-
-            //remove all entries that are no longer in the list (newList)
-            for (int i = oldList.Count - 1; i >= 0; i--)
-            {
-                bool found = false;
-                foreach (WebScraper s in newList)
-                {
-                    if (oldList[i].ScraperId.Equals(s.ScraperId))
-                    {
-                        found = true;
-                        break;
-                    }
-                }
-
-                if (!found)
-                {
-                    oldList.RemoveAt(i);
-                }
-            }
-        }
-
-        /// <summary>
-        /// Turns an object into JSON
-        /// </summary>
-        /// <param name="obj"></param>
-        /// <returns></returns>
         public static string ToJSON(this object obj)
         {
             if (obj == null) return string.Empty;

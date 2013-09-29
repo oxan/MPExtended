@@ -128,11 +128,9 @@ namespace MPExtended.Applications.ServiceConfigurator.Pages
             try
             {
                 IList<WebScraper> tmp = Proxy.GetAvailableScrapers();
-                _autostart = Proxy.GetAutoStartPlugins();
                 if (tmp != null)
-                {
-                    _scrapers.UpdateScraperList(tmp);
-                }
+                    _scrapers.UpdateList(x => x.ScraperId.ToString(), tmp);
+                _autostart = Proxy.GetAutoStartPlugins();
             }
             catch (CommunicationException ex)
             {

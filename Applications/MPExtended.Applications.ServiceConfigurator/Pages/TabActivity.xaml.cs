@@ -76,9 +76,7 @@ namespace MPExtended.Applications.ServiceConfigurator.Pages
                 IList<WebStreamingSession> tmp = _services.MASStreamControl.GetStreamingSessions();
 
                 if (tmp != null)
-                {
-                    mStreamingSessions.UpdateStreamingList(tmp);
-                }
+                    mStreamingSessions.UpdateList(x => x.Identifier, tmp);
             }
             catch (Exception ex)
             {

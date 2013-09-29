@@ -25,63 +25,55 @@ using MPExtended.Services.StreamingService.Interfaces;
 
 namespace MPExtended.Applications.ServiceConfigurator.Code
 {
-    internal class WpfStreamingSession : INotifyPropertyChanged
+    internal class WpfStreamingSession : IWpfListItem<WebStreamingSession>, INotifyPropertyChanged
     {
-        private WebStreamingSession mStreamingSession;
+        public string Identifier { get; private set; }
+        public string ClientDescription { get; private set; }
+        public string ClientIP { get; private set; }
+        public string Profile { get; private set; }
+        public string File { get; private set; }
+        public string Progress { get; private set; }
 
-        public WpfStreamingSession(WebStreamingSession sNew)
+        public event PropertyChangedEventHandler PropertyChanged;
+
+        public WpfStreamingSession()
         {
-            UpdateStreamingSession(sNew);
         }
 
-        public void UpdateStreamingSession(WebStreamingSession newSession)
+        public void UpdateFrom(WebStreamingSession newSession)
         {
-            mStreamingSession = newSession;
-            this.Identifier = newSession.Identifier;
-            this.ClientDescription = newSession.ClientDescription;
-            this.ClientIP = newSession.ClientIPAddress;
+            Identifier = newSession.Identifier;
+            ClientDescription = newSession.ClientDescription;
+            ClientIP = newSession.ClientIPAddress;
 
-            if (this.Profile == null || !this.Profile.Equals(newSession.Profile))
+            if (Profile == null || Profile != newSession.Profile)
             {
-                this.Profile = newSession.Profile;
+                Profile = newSession.Profile;
                 NotifyPropertyChanged("Profile");
             }
 
-            String file = newSession.DisplayName;
-            if (this.File == null || !this.File.Equals(file))
+            if (File == null || File != newSession.DisplayName)
             {
-                this.File = file;
+                File = newSession.DisplayName;
                 NotifyPropertyChanged("File");
             }
 
             if (newSession.PlayerPosition > 0)
             {
                 TimeSpan span = TimeSpan.FromMilliseconds(newSession.PlayerPosition);
-                span = span.Subtract(TimeSpan.FromMilliseconds(span.Milliseconds)); // don't show the damn milliseconds
-                String progress = span.ToString("g") + " (" + newSession.PercentageProgress + "%)";
-                if (this.Progress == null || !this.Progress.Equals(progress))
+                string progress = String.Format("{0:h\\:mm\\:ss} ({0}%)", span, newSession.PercentageProgress);
+                if (Progress == null || Progress != progress)
                 {
-                    this.Progress = progress;
+                    Progress = progress;
                     NotifyPropertyChanged("Progress");
                 }
             }
         }
 
-        public String Identifier { get; set; }
-        public String ClientDescription { get; set; }
-        public String ClientIP { get; set; }
-        public String Profile { get; set; }
-        public String File { get; set; }
-        public String Progress { get; set; }
-
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private void NotifyPropertyChanged(String info)
         {
             if (PropertyChanged != null)
-            {
                 PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
         }
     }
 }

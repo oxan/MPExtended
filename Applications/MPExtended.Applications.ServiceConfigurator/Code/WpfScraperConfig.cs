@@ -24,18 +24,18 @@ using MPExtended.Services.ScraperService.Interfaces;
 
 namespace MPExtended.Applications.ServiceConfigurator.Code
 {
-    public class WpfScraperConfig : WebScraper, INotifyPropertyChanged
+    public class WpfScraperConfig : WebScraper, IWpfListItem<WebScraper>, INotifyPropertyChanged
     {
-        private WebScraper _scraper;
+        private WebScraper scraper;
 
-        public WpfScraperConfig() { }
+        public event PropertyChangedEventHandler PropertyChanged;
+        public string Identifier { get { return scraper.ScraperId.ToString(); } }
 
-        public WpfScraperConfig(WebScraper old)
+        public WpfScraperConfig()
         {
-            UpdateScraper(old);
         }
 
-        public void UpdateScraper(WebScraper newScraper)
+        public void UpdateFrom(WebScraper newScraper)
         {
             ScraperId = newScraper.ScraperId;
             ScraperName = newScraper.ScraperName;
@@ -48,14 +48,9 @@ namespace MPExtended.Applications.ServiceConfigurator.Code
             }
         }
 
-        public event PropertyChangedEventHandler PropertyChanged;
-
         private void NotifyPropertyChanged(String info)
         {
-            if (PropertyChanged != null)
-            {
-                PropertyChanged(this, new PropertyChangedEventArgs(info));
-            }
+            PropertyChanged(this, new PropertyChangedEventArgs(info));
         }
     }
 }

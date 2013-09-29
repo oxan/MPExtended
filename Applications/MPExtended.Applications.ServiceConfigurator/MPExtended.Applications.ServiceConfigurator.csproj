@@ -80,6 +80,7 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Compile Include="Code\IWpfListItem.cs" />
     <Compile Include="Code\ServiceControlInterface.cs" />
     <Compile Include="Code\WpfScraperConfig.cs" />
     <Compile Include="Code\Zeroconf.cs" />
